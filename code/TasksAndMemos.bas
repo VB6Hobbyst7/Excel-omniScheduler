@@ -14,6 +14,7 @@ Function memoRange() As Range
 End Function
 
 Sub CompleteTasks()
+If TypeName(Selection) <> "Range" Then Exit Sub
     Dim cell As Range
     Dim rng As Range
     For Each cell In Selection
@@ -27,15 +28,20 @@ Sub CompleteTasks()
             End If
         End If
     Next
-    Dim var(0 To 2)
-    For Each cell In rng
-        var(0) = Sheets("Schedule").Range("M2")
-        var(1) = Format(Now(), "dd-mm-yy HH:NN")
-        var(2) = cell
-        lastCell(Sheets("Completed").Range("A1"), , True).Resize(, 3).Value = var
-    Next
-    rng.Delete (xlUp)
-    [addTask].Select
+    If Not rng Is Nothing Then
+        Dim var(0 To 2)
+        For Each cell In rng
+            var(0) = Sheets("Schedule").Range("M2")
+            var(1) = Format(Now(), "dd-mm-yy HH:NN")
+            var(2) = cell
+            lastCell(Sheets("Completed").Range("A1"), , True).Resize(, 3).Value = var
+        Next
+        rng.Delete (xlUp)
+        [addTask].Select
+    Else
+        msbox "Select tasks to mark as completed"
+        Exit Sub
+    End If
 End Sub
 
 Sub LoadElements(fromRange As Range, toSheet As Worksheet)
